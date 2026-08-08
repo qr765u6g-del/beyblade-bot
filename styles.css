@@ -56,16 +56,13 @@ body {
   overflow-x: hidden;
 }
 
-/* 頂部導覽列 Header */
+/* 頂部導覽列 Header (簡化緊湊，不遮擋手機螢幕) */
 .app-header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(9, 13, 22, 0.92);
+  background: rgba(9, 13, 22, 0.95);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 0.85rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -75,25 +72,25 @@ body {
 .brand-container {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .logo-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+  font-size: 1.2rem;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
   flex-shrink: 0;
 }
 
 .brand-title {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 900;
   letter-spacing: 0.5px;
   background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
@@ -102,7 +99,6 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  flex-wrap: wrap;
 }
 
 .brand-badge {
@@ -110,38 +106,36 @@ body {
   background: rgba(0, 240, 255, 0.15);
   color: var(--accent-cyan);
   border: 1px solid var(--accent-cyan);
-  padding: 0.15rem 0.5rem;
-  border-radius: 20px;
+  padding: 0.1rem 0.4rem;
+  border-radius: 12px;
   font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .live-indicator {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.05);
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 20px;
   border: 1px solid var(--border-subtle);
   white-space: nowrap;
 }
 
 .pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background-color: var(--accent-emerald);
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--accent-emerald);
+  box-shadow: 0 0 8px var(--accent-emerald);
   animation: pulse 1.5s infinite;
   flex-shrink: 0;
 }
@@ -155,49 +149,54 @@ body {
 /* 主容器 */
 .main-container {
   max-width: 1400px;
-  margin: 1.25rem auto;
+  margin: 1rem auto;
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+}
+
+/* 獨立的操作工具按鈕區 Toolbar (避免擠在 Header) */
+.action-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-toolbar .btn {
+  flex: 1;
+  min-width: 110px;
 }
 
 /* 按鈕風格 */
 .btn {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.55rem 1rem;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.85rem;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   white-space: nowrap;
+  word-break: keep-all;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
   color: #000;
-  box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(0, 240, 255, 0.25);
 }
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
-}
-
-.btn-secondary:active {
-  background: rgba(255, 255, 255, 0.15);
 }
 
 .btn-danger {
@@ -209,51 +208,49 @@ body {
 .btn-accent {
   background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
   color: #fff;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
 }
 
 /* 頂部統計指標數據列 Metrics Grid */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
 }
 
 .metric-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.9rem 1rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: 0.75rem 0.85rem;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
 }
 
 .metric-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
 }
 
 .metric-info h4 {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .metric-value {
   font-family: var(--font-heading);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 900;
-  margin-top: 0.1rem;
+  margin-top: 0.05rem;
 }
 
 /* 頻道選單與廣播列 Notifications Banner */
@@ -261,19 +258,19 @@ body {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.75));
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 1rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .channels-list {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   overflow-x: auto;
   padding-bottom: 2px;
   -webkit-overflow-scrolling: touch;
@@ -282,10 +279,10 @@ body {
 .channel-tag {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem 0.65rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.55rem;
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
@@ -299,20 +296,20 @@ body {
   }
 }
 
-/* 篩選分頁過濾 Tabs (手機捲動優化) */
+/* 篩選分頁過濾 Tabs (橫向滑動) */
 .filter-bar {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
   background: var(--bg-card);
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.85rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
 }
 
 .tabs-group {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
   overflow-x: auto;
   padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
@@ -322,10 +319,10 @@ body {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 0.45rem 0.85rem;
+  padding: 0.4rem 0.75rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -338,11 +335,11 @@ body {
   }
 }
 
-/* 陀螺商品 Grid 卡片區 (手機 1 欄或雙欄自適應) */
+/* 陀螺商品 Grid 卡片區 */
 .beyblades-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .beyblade-card {
@@ -352,7 +349,7 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   position: relative;
 
   &.is-in-stock {
@@ -362,16 +359,16 @@ body {
 }
 
 .card-header-image {
-  height: 150px;
+  height: 140px;
   width: 100%;
   object-fit: cover;
 }
 
 .card-badges {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
+  top: 8px;
+  left: 8px;
+  right: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -380,8 +377,8 @@ body {
 .model-badge {
   font-family: var(--font-heading);
   font-weight: 900;
-  font-size: 0.8rem;
-  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
@@ -390,9 +387,9 @@ body {
 }
 
 .status-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.25rem 0.6rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 20px;
   backdrop-filter: blur(8px);
 
@@ -410,32 +407,32 @@ body {
 }
 
 .card-body {
-  padding: 1rem;
+  padding: 0.85rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .store-info {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
 }
 
 .store-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
 }
 
 .item-title {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-bright);
-  line-height: 1.35;
+  line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -447,13 +444,13 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: 0.6rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--border-subtle);
 }
 
 .item-price {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 900;
   color: var(--accent-amber);
 }
@@ -461,7 +458,7 @@ body {
 .card-footer-actions {
   display: flex;
   gap: 0.4rem;
-  margin-top: 0.4rem;
+  margin-top: 0.35rem;
 }
 
 /* 補貨動態紀錄 Feed Panel */
@@ -469,19 +466,19 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  padding: 1rem;
 }
 
 .panel-title {
   font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
   border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.5rem;
 }
 
 .logs-table-wrapper {
@@ -493,11 +490,11 @@ body {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   white-space: nowrap;
 
   th, td {
-    padding: 0.7rem 0.85rem;
+    padding: 0.6rem 0.75rem;
     border-bottom: 1px solid var(--border-subtle);
   }
 
@@ -505,25 +502,25 @@ body {
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
   }
 }
 
 /* 直達快捷專區 Store Quick Links */
 .quick-links-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.6rem;
 }
 
 .quick-link-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.75rem;
+  padding: 0.65rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   text-decoration: none;
   color: var(--text-main);
 
@@ -536,7 +533,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.82);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   display: flex;
@@ -546,7 +543,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
-  padding: 1rem;
+  padding: 0.75rem;
 
   &.active {
     opacity: 1;
@@ -559,10 +556,10 @@ body {
   border: 1px solid var(--border-glow);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 580px;
-  max-height: 85vh;
+  max-width: 540px;
+  max-height: 88vh;
   overflow-y: auto;
-  padding: 1.25rem;
+  padding: 1.1rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
 }
 
@@ -570,29 +567,29 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-subtle);
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.5rem;
 }
 
 .close-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   cursor: pointer;
-  padding: 0.2rem 0.5rem;
+  padding: 0.2rem 0.4rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 
   label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--text-muted);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
   }
 
   input, select, textarea {
@@ -600,64 +597,72 @@ body {
     background: rgba(15, 23, 42, 0.95);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
-    padding: 0.65rem 0.85rem;
+    padding: 0.55rem 0.75rem;
     color: var(--text-main);
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
   }
 }
 
 footer {
   text-align: center;
-  padding: 1.5rem 1rem;
+  padding: 1.25rem 1rem;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   border-top: 1px solid var(--border-subtle);
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
-/* 📱 手機極致響應式適配 (RWD Rules for Mobile Devices) */
+/* 📱 手機極致響應式適配 (專門解決直向文字與 Header 遮擋問題) */
 @media (max-width: 768px) {
   .app-header {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0.75rem 1rem;
-    gap: 0.6rem;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.6rem 0.85rem;
   }
 
-  .header-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+  .brand-title {
+    font-size: 1rem;
   }
 
   .live-indicator {
-    grid-column: 1 / -1;
-    justify-content: center;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .action-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .action-toolbar .btn {
+    font-size: 0.75rem;
+    padding: 0.45rem 0.3rem;
   }
 
   .metrics-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .metric-card {
-    padding: 0.75rem;
-    gap: 0.6rem;
+    padding: 0.6rem;
+    gap: 0.5rem;
   }
 
   .metric-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
   }
 
   .metric-value {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
   }
 
   .filter-bar {
-    padding: 0.6rem;
+    padding: 0.5rem;
   }
 
   #search-input {
@@ -666,7 +671,7 @@ footer {
 
   .beyblades-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.85rem;
   }
 
   .quick-links-grid {
