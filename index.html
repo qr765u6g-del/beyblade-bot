@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>戰鬥陀螺 X 補貨通知機器人 | 台灣秒殺戰鬥陀螺即時監控儀表板</title>
-  <meta name="description" content="針對台灣戰鬥陀螺 X 熱門商品 (BX-35, UX-01 等) 的即時補貨監控系統，支援 Funbox 麗嬰國際、誠品線上、蝦皮、MOMO 監控與 Gmail/Discord/Telegram/LINE 通知。">
+  <title>戰鬥陀螺 X 官方情報與補貨通知雷達 | 補貨・抽選・預購・抽獎</title>
+  <meta name="description" content="針對台灣戰鬥陀螺 X 熱門商品 (BX-35, UX-01 等) 的即時補貨與官方資訊監控，包含 Funbox 實名制抽選、誠品/鼎美預購、現貨補貨與 Discord 秒級通知。">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌀</text></svg>">
 </head>
@@ -16,8 +16,8 @@
       <div class="logo-icon">🌀</div>
       <div>
         <h1 class="brand-title">
-          BEYBLADE X 補貨雷達
-          <span class="brand-badge">PRO v1.0</span>
+          BEYBLADE X 補貨情報雷達
+          <span class="brand-badge">PRO v1.5</span>
         </h1>
       </div>
     </div>
@@ -39,10 +39,10 @@
         🔄 即時掃描
       </button>
       <button class="btn btn-primary" onclick="openAddModal()">
-        ➕ 新增商品
+        ➕ 新增監控
       </button>
       <button class="btn btn-accent" onclick="openSettingsModal()">
-        ⚙️ 通道設定
+        ⚙️ 推播通道
       </button>
     </section>
 
@@ -51,7 +51,7 @@
       <div class="metric-card">
         <div class="metric-icon" style="background: rgba(0, 240, 255, 0.15); color: var(--accent-cyan);">🌀</div>
         <div class="metric-info">
-          <h4>總監控商品</h4>
+          <h4>總監控項目</h4>
           <div class="metric-value" id="metric-total-count">0</div>
         </div>
       </div>
@@ -59,24 +59,24 @@
       <div class="metric-card" style="border-color: rgba(0, 255, 136, 0.3);">
         <div class="metric-icon" style="background: rgba(0, 255, 136, 0.15); color: var(--accent-emerald);">⚡</div>
         <div class="metric-info">
-          <h4>現貨開放中</h4>
+          <h4>現貨 / 預購中</h4>
           <div class="metric-value" id="metric-instock-count" style="color: var(--accent-emerald);">0</div>
         </div>
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon" style="background: rgba(255, 42, 95, 0.15); color: var(--accent-rose);">⌛</div>
+        <div class="metric-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);">📝</div>
         <div class="metric-info">
-          <h4>完售補貨中</h4>
-          <div class="metric-value" id="metric-outstock-count" style="color: var(--accent-rose);">0</div>
+          <h4>官方抽選/抽獎</h4>
+          <div class="metric-value" id="metric-lottery-count" style="color: var(--accent-purple);">0</div>
         </div>
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon" style="background: rgba(255, 184, 0, 0.15); color: var(--accent-amber);">🔔</div>
+        <div class="metric-icon" style="background: rgba(255, 184, 0, 0.15); color: var(--accent-amber);">🛡️</div>
         <div class="metric-info">
-          <h4>已啟動頻道</h4>
-          <div class="metric-value" id="metric-notifier-count">4 管道</div>
+          <h4>防黃牛機制</h4>
+          <div class="metric-value" style="color: var(--accent-amber); font-size: 0.95rem;">原價守護中</div>
         </div>
       </div>
     </section>
@@ -86,7 +86,7 @@
       <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%;">
         <span style="font-weight: 700; font-size: 0.8rem; white-space: nowrap;">📡 啟用頻道：</span>
         <div class="channels-list">
-          <span class="channel-tag active" id="tag-discord">💬 Discord</span>
+          <span class="channel-tag active" id="tag-discord">💬 Discord (推薦)</span>
           <span class="channel-tag active" id="tag-telegram">✈️ Telegram</span>
           <span class="channel-tag active" id="tag-line">💚 LINE</span>
           <span class="channel-tag active" id="tag-gmail">📧 Gmail</span>
@@ -95,24 +95,34 @@
       </div>
       <div style="width: 100%; display: flex; justify-content: flex-end;">
         <button class="btn btn-secondary" onclick="triggerTestRestock('all')" style="font-size: 0.75rem; padding: 0.35rem 0.6rem; width: 100%;">
-          🚀 一鍵發送模擬補貨測試
+          🚀 發送模擬補貨 / 抽選通知測試
         </button>
       </div>
     </section>
 
-    <!-- 3. 商品篩選分頁與搜尋 Tab Filter -->
+    <!-- 3. 商品與通知類型篩選分頁 Tab Filter -->
     <section class="filter-bar">
-      <div class="tabs-group">
-        <button class="tab-btn active" onclick="filterItems('all', this)">全部 (<span id="count-all">0</span>)</button>
-        <button class="tab-btn" onclick="filterItems('instock', this)">🟢 僅現貨 (<span id="count-instock">0</span>)</button>
-        <button class="tab-btn" onclick="filterItems('funbox', this)">🛍️ Funbox</button>
-        <button class="tab-btn" onclick="filterItems('eslite', this)">📚 誠品線上</button>
-        <button class="tab-btn" onclick="filterItems('shopee', this)">🧡 蝦皮</button>
-        <button class="tab-btn" onclick="filterItems('other', this)">🛒 MOMO/PChome</button>
+      <!-- 類型切換 (現貨 / 抽選 / 預購 / 抽獎) -->
+      <div class="tabs-group" style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 6px;">
+        <button class="tab-btn active" onclick="filterItems('all', this)">🔥 全部情報 (<span id="count-all">0</span>)</button>
+        <button class="tab-btn" onclick="filterItems('restock', this)">⚡ 現貨補貨 (<span id="count-restock">0</span>)</button>
+        <button class="tab-btn" onclick="filterItems('lottery', this)">📝 實名制抽選 (<span id="count-lottery">0</span>)</button>
+        <button class="tab-btn" onclick="filterItems('preorder', this)">📅 新品預購 (<span id="count-preorder">0</span>)</button>
+        <button class="tab-btn" onclick="filterItems('event', this)">🎁 官方抽獎/活動 (<span id="count-event">0</span>)</button>
       </div>
 
-      <div style="width: 100%;">
-        <input type="text" id="search-input" placeholder="🔍 搜尋型號 (例 BX-35, UX-01)..." oninput="handleSearch()" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); padding: 0.45rem 0.75rem; border-radius: 8px; color: #fff; width: 100%; font-size: 0.8rem;">
+      <!-- 商城通路切換 -->
+      <div class="tabs-group" style="margin-top: 2px;">
+        <button class="tab-btn" onclick="filterStore('funbox', this)">🛍️ Funbox 麗嬰</button>
+        <button class="tab-btn" onclick="filterStore('eslite', this)">📚 誠品線上</button>
+        <button class="tab-btn" onclick="filterStore('toyworld', this)">🧸 鼎美 ToyWorld</button>
+        <button class="tab-btn" onclick="filterStore('books', this)">📖 博客來</button>
+        <button class="tab-btn" onclick="filterStore('shopee', this)">🧡 蝦皮旗艦店</button>
+        <button class="tab-btn" onclick="filterStore('official', this)">📢 官方粉專情報</button>
+      </div>
+
+      <div style="width: 100%; margin-top: 4px;">
+        <input type="text" id="search-input" placeholder="🔍 搜尋型號或關鍵字 (例 BX-35, 抽選, 預購)..." oninput="handleSearch()" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); padding: 0.45rem 0.75rem; border-radius: 8px; color: #fff; width: 100%; font-size: 0.8rem;">
       </div>
     </section>
 
@@ -124,7 +134,7 @@
     <!-- 5. 補貨即時動態與通知日誌 Panel -->
     <section class="logs-panel">
       <div class="panel-title">
-        <span>⚡ 補貨歷史與推播動態 Feed</span>
+        <span>⚡ 補貨與抽選動態歷史 Feed</span>
         <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 400; margin-left: auto;" id="logs-count">0 筆紀錄</span>
       </div>
       <div class="logs-table-wrapper">
@@ -132,11 +142,12 @@
           <thead>
             <tr>
               <th>時間</th>
+              <th>類型</th>
               <th>型號</th>
-              <th>商品名稱</th>
+              <th>情報名稱</th>
               <th>通路</th>
-              <th>價格</th>
-              <th>已觸發管道</th>
+              <th>價格 (MSRP)</th>
+              <th>已觸發頻道</th>
               <th>連結</th>
             </tr>
           </thead>
@@ -150,38 +161,38 @@
     <!-- 6. 官方直達快捷通道 Stores Grid -->
     <section>
       <h3 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-muted);">
-        🔗 台灣戰鬥陀螺 X 官方與熱門銷售直達捷徑
+        🛡️ 台灣戰鬥陀螺 X 正版官方與授權通路直達通道 (拒絕黃牛溢價)
       </h3>
       <div class="quick-links-grid">
         <a href="https://shop.funbox.com.tw/" target="_blank" class="quick-link-card">
           <span style="font-size: 1.3rem;">🛍️</span>
           <div>
-            <strong style="display: block; font-size: 0.82rem;">Funbox 麗嬰</strong>
-            <span style="font-size: 0.7rem; color: var(--text-muted);">官網抽選與新品</span>
+            <strong style="display: block; font-size: 0.82rem;">Funbox 麗嬰國際</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">官網抽選與新品專區</span>
           </div>
         </a>
 
         <a href="https://www.eslite.com/search?q=%E6%88%B0%E9%AC%B5%E9%99%80%E8%9E%BA" target="_blank" class="quick-link-card">
           <span style="font-size: 1.3rem;">📚</span>
           <div>
-            <strong style="display: block; font-size: 0.82rem;">誠品線上</strong>
-            <span style="font-size: 0.7rem; color: var(--text-muted);">戰鬥陀螺專區</span>
+            <strong style="display: block; font-size: 0.82rem;">誠品線上 Eslite</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">文具館戰鬥陀螺正版</span>
           </div>
         </a>
 
-        <a href="https://shopee.tw/search?keyword=%E6%88%B0%E9%AC%B5%E9%99%80%E8%9E%BA%20X" target="_blank" class="quick-link-card">
-          <span style="font-size: 1.3rem;">🧡</span>
+        <a href="https://www.toyworld.com.tw/" target="_blank" class="quick-link-card">
+          <span style="font-size: 1.3rem;">🧸</span>
           <div>
-            <strong style="display: block; font-size: 0.82rem;">蝦皮購物</strong>
-            <span style="font-size: 0.7rem; color: var(--text-muted);">麗嬰旗艦店搜尋</span>
+            <strong style="display: block; font-size: 0.82rem;">鼎美 Toy World</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">全台門市公司貨預購</span>
           </div>
         </a>
 
         <a href="https://www.facebook.com/BeybladeTW" target="_blank" class="quick-link-card">
           <span style="font-size: 1.3rem;">📢</span>
           <div>
-            <strong style="display: block; font-size: 0.82rem;">戰鬥陀螺 TW FB</strong>
-            <span style="font-size: 0.7rem; color: var(--text-muted);">官方最新公告</span>
+            <strong style="display: block; font-size: 0.82rem;">戰鬥陀螺 TW 官方 FB</strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">大會抽選與賽事抽獎</span>
           </div>
         </a>
       </div>
@@ -189,37 +200,47 @@
 
   </main>
 
-  <!-- 彈窗 1: 新增監控商品 Modal -->
+  <!-- 彈窗 1: 新增監控項目 Modal -->
   <div class="modal-overlay" id="add-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--accent-cyan);">➕ 新增戰鬥陀螺監控網址</h3>
+        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--accent-cyan);">➕ 新增戰鬥陀螺監控與情報網址</h3>
         <button class="close-btn" onclick="closeAddModal()">&times;</button>
       </div>
       <form id="add-item-form" onsubmit="handleAddItem(event)">
         <div class="form-group">
-          <label>型號代碼 (例: BX-38 / UX-05)</label>
+          <label>情報類型</label>
+          <select id="input-type">
+            <option value="restock">⚡ 現貨補貨監控</option>
+            <option value="lottery">📝 官方實名制抽選</option>
+            <option value="preorder">📅 新品預購追蹤</option>
+            <option value="event">🎁 官方抽獎 / 賽事活動</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>型號代碼 (例: BX-38 / UX-05 / EVENT)</label>
           <input type="text" id="input-code" placeholder="例: BX-35" required>
         </div>
 
         <div class="form-group">
-          <label>商品名稱</label>
-          <input type="text" id="input-name" placeholder="例: 戰鬥陀螺 X BX-35 特別限定包" required>
+          <label>情報/商品名稱</label>
+          <input type="text" id="input-name" placeholder="例: 戰鬥陀螺 X UX-02 線上抽選登記" required>
         </div>
 
         <div class="form-group">
-          <label>購物平台網址 (支援 Funbox、誠品線上、蝦皮、MOMO、PChome)</label>
-          <input type="url" id="input-url" placeholder="https://shop.funbox.com.tw/products/..." required>
+          <label>網址 (支援 Funbox、誠品、鼎美、博客來、蝦皮、官方 FB)</label>
+          <input type="url" id="input-url" placeholder="https://..." required>
         </div>
 
         <div class="form-group">
-          <label>預計售價 (NT$)</label>
+          <label>官方建議定價 (NT$) - 防黃牛溢價比對</label>
           <input type="number" id="input-price" placeholder="450" required>
         </div>
 
         <div class="form-group">
-          <label>店家/通路名稱</label>
-          <input type="text" id="input-store" placeholder="例: Funbox 麗嬰國際 / 誠品線上">
+          <label>通路/平台名稱</label>
+          <input type="text" id="input-store" placeholder="例: Funbox 門市抽選 / 誠品線上">
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
@@ -234,34 +255,33 @@
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--accent-purple);">⚙️ 補貨推播頻道與 API 設定</h3>
+        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--accent-purple);">⚙️ 補貨與抽選推播頻道設定</h3>
         <button class="close-btn" onclick="closeSettingsModal()">&times;</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         
+        <!-- Discord 設定 -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: 10px;">
+          <h4 style="color: #5865F2; font-size: 0.9rem; margin-bottom: 0.3rem;">💬 Discord Webhook (推薦 24H 聽通知)</h4>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">於 Render 環境變數中貼入 <code>DISCORD_WEBHOOK_URL</code> 即可開啟手機 Discord 推播。</p>
+          <button class="btn btn-secondary" onclick="triggerTestRestock('discord')" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
+            💬 測試發送 Discord 補貨/抽選卡片
+          </button>
+        </div>
+
         <!-- Gmail 設定 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: 10px;">
-          <h4 style="color: var(--accent-cyan); font-size: 0.9rem; margin-bottom: 0.3rem;">📧 Gmail / 電子郵件通知 (100% 免費)</h4>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">於 <code>.env</code> 中配置 Gmail 帳號與應用程式密碼，補貨時會自動寄送 HTML 信件。</p>
+          <h4 style="color: var(--accent-cyan); font-size: 0.9rem; margin-bottom: 0.3rem;">📧 Gmail 信件通知</h4>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">於 Render 環境變數配置 Gmail 帳號即可接收彩色通知信。</p>
           <button class="btn btn-secondary" onclick="triggerTestRestock('gmail')" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
             📨 測試發送 Gmail 郵件
           </button>
         </div>
 
-        <!-- Discord 設定 -->
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: 10px;">
-          <h4 style="color: #5865F2; font-size: 0.9rem; margin-bottom: 0.3rem;">💬 Discord Webhook (最快速 & 免費)</h4>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">在 Discord 頻道「整合 > 建立 Webhook」並在 Render 貼入網址即可秒級推播卡片。</p>
-          <button class="btn btn-secondary" onclick="triggerTestRestock('discord')" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
-            💬 測試發送 Discord 卡片
-          </button>
-        </div>
-
         <!-- Telegram 設定 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: 10px;">
-          <h4 style="color: #24A1DE; font-size: 0.9rem; margin-bottom: 0.3rem;">✈️ Telegram Bot (最快速 & 免費)</h4>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">透過 BotFather 申請 Bot Token 與 Chat ID 推送秒級訊息。</p>
+          <h4 style="color: #24A1DE; font-size: 0.9rem; margin-bottom: 0.3rem;">✈️ Telegram Bot</h4>
           <button class="btn btn-secondary" onclick="triggerTestRestock('telegram')" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
             ✈️ 測試發送 Telegram 訊息
           </button>
@@ -269,22 +289,9 @@
 
         <!-- LINE Notify 設定 -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: 10px;">
-          <h4 style="color: #00B900; font-size: 0.9rem; margin-bottom: 0.3rem;">💚 LINE Notify (台灣玩家熱門)</h4>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">發行權限 Token，即可發送個人或群組 LINE 警報。</p>
+          <h4 style="color: #00B900; font-size: 0.9rem; margin-bottom: 0.3rem;">💚 LINE Notify</h4>
           <button class="btn btn-secondary" onclick="triggerTestRestock('line')" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
             💚 測試發送 LINE 訊息
-          </button>
-        </div>
-
-        <!-- 網頁音效與聲音控制 -->
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: 10px;">
-          <h4 style="color: var(--accent-amber); font-size: 0.9rem; margin-bottom: 0.3rem;">🔊 瀏覽器現場警報音效 (Siren Alert)</h4>
-          <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; cursor: pointer;">
-            <input type="checkbox" id="sound-toggle" checked onchange="toggleSound(this.checked)">
-            開啟儀表板頁面時發出高分貝 Sirens 警報聲
-          </label>
-          <button class="btn btn-secondary" onclick="playSirenSound()" style="margin-top: 0.5rem; font-size: 0.75rem; padding: 0.3rem 0.6rem;">
-            🔊 試聽警報音效
           </button>
         </div>
 
@@ -297,7 +304,7 @@
   </div>
 
   <footer>
-    <p>戰鬥陀螺 X (Beyblade X) 自動補貨監控機器人系統 • 專為台灣戰鬥陀螺玩家打造</p>
+    <p>戰鬥陀螺 X (Beyblade X) 官方情報與全通路補貨通知系統 • 正版原價守護</p>
   </footer>
 
   <script src="js/mockData.js"></script>
