@@ -1,0 +1,33 @@
+{
+  "name": "beyblade-x-restock-bot",
+  "version": "1.0.0",
+  "description": "戰鬥陀螺 X (Beyblade X) 補貨通知機器人 - 支援 Funbox、蝦皮、誠品、MOMO、PChome 監控與 Gmail/Discord/Telegram/LINE 通知",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "beyblade",
+    "restock-bot",
+    "taiwan",
+    "funbox",
+    "shopee",
+    "eslite",
+    "discord-webhook",
+    "telegram-bot",
+    "line-notify",
+    "gmail"
+  ],
+  "author": "Antigravity AI",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13"
+  }
+}

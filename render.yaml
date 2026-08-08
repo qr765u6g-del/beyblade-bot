@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: beyblade-x-restock-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: CHECK_INTERVAL_SECONDS
+        value: 60
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
