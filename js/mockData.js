@@ -12,10 +12,10 @@ const PRESET_BEYBLADES = [
     storeKey: 'funbox',
     url: 'https://shop.funbox.com.tw/products/beyblade-x-bx-35',
     price: 699,
-    status: 'in_stock', // in_stock | out_of_stock | checking
+    status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
-    stockText: '現貨發售中',
+    stockText: '⌛ 完售監控中',
     note: 'Funbox 官網正版公司貨'
   },
   {
@@ -30,7 +30,7 @@ const PRESET_BEYBLADES = [
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80',
-    stockText: '完售補貨中',
+    stockText: '⌛ 完售監控中',
     note: '誠品線上文具館代理版'
   },
   {
@@ -42,10 +42,10 @@ const PRESET_BEYBLADES = [
     storeKey: 'shopee',
     url: 'https://shopee.tw/search?keyword=BX-36%20%E6%84%9B%EAC%E5%A9%A6%E6%8E%A7',
     price: 395,
-    status: 'in_stock',
+    status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
-    stockText: '熱銷現貨供應',
+    stockText: '⌛ 完售監控中',
     note: '蝦皮商城 24H 快速出貨'
   },
   {
@@ -60,7 +60,7 @@ const PRESET_BEYBLADES = [
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=400&q=80',
-    stockText: '線上抽籤預購中',
+    stockText: '⌛ 完售監控中',
     note: '需實名制登記抽籤購買'
   },
   {
@@ -72,10 +72,10 @@ const PRESET_BEYBLADES = [
     storeKey: 'momo',
     url: 'https://www.momoshop.com.tw/search/searchShop.jsp?keyword=Beyblade%20CX-01',
     price: 1999,
-    status: 'in_stock',
+    status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80',
-    stockText: '庫存僅剩 3 件',
+    stockText: '⌛ 完售監控中',
     note: 'MOMO 滿額折抵優惠中'
   },
   {
@@ -90,7 +90,7 @@ const PRESET_BEYBLADES = [
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80',
-    stockText: '缺貨中 (貨到通知)',
+    stockText: '⌛ 完售監控中',
     note: '搶手極品限定款式'
   }
 ];
