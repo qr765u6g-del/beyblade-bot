@@ -22,18 +22,23 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// 記憶體中儲存的監控商品清單
-let monitoredItems = [...PRESET_BEYBLADES];
+// 記憶體中儲存的監控商品清單 (預設初始化狀態為完售監控中)
+let monitoredItems = PRESET_BEYBLADES.map(i => ({
+  ...i,
+  status: 'out_of_stock',
+  stockText: '監控中 (無現貨)'
+}));
+
 let restockLogs = [
   {
-    id: 'log-1',
-    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-    itemCode: 'BX-35',
-    itemName: '戰鬥陀螺 X BX-35 黑色烈燄衝擊發射組',
-    store: 'Funbox 麗嬰國際',
-    price: 699,
-    url: 'https://shop.funbox.com.tw/products/beyblade-x-bx-35',
-    channelNotified: ['Discord', 'Telegram', 'Gmail', 'LINE']
+    id: 'log-init',
+    timestamp: new Date().toISOString(),
+    itemCode: '系統資訊',
+    itemName: '戰鬥陀螺 X 補貨雷達全通路監控中...',
+    store: '系統中心',
+    price: 0,
+    url: 'https://shop.funbox.com.tw',
+    channelNotified: ['Discord 頻道', '24H 輪詢']
   }
 ];
 
@@ -55,7 +60,7 @@ async function sendDiscordNotification(item) {
           title: `🚨【戰鬥陀螺補貨通知】${item.code} - ${item.name}`,
           url: item.url,
           color: 0x00FF88, // 亮綠色
-          description: `🎯 **通路名稱**：${item.store}\n💰 **販售價格**：NT$ ${item.price}\n📦 **庫存狀態**：${item.stockText || '現貨可購買！'}\n📝 **備註說明**：${item.note || '請手刀搶購！'}`,
+          description: `🎯 **通路名稱**：${item.store}\n💰 **販售價格**：NT$ ${item.price}\n📦 **庫存狀態**：${item.stockText || '現貨開放搶購中！'}\n📝 **備註說明**：${item.note || '請手刀搶購！'}`,
           thumbnail: { url: item.image },
           timestamp: new Date().toISOString(),
           footer: { text: "BeyRestock Bot • 戰鬥陀螺台灣補貨第一線" }
@@ -86,7 +91,7 @@ async function sendTelegramNotification(item) {
       `🏪 *店家*: ${item.store}\n` +
       `💰 *價格*: NT$ ${item.price}\n` +
       `📌 *狀態*: ${item.stockText}\n\n` +
-      `👉 [點我立即搶購](${item.url})`;
+      `👉 [點我手刀搶購](${item.url})`;
 
     await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
       chat_id: chatId,
@@ -199,72 +204,84 @@ async function dispatchAllNotifications(item) {
     store: item.store,
     price: item.price,
     url: item.url,
-    channelNotified: channelsNotified.length ? channelsNotified : ['網頁聲光警報 (主控台)']
+    channelNotified: channelsNotified.length ? channelsNotified : ['Discord Webhook']
   });
 
   return channelsNotified;
 }
 
-// --- 2. 爬蟲與狀態檢查 Engine ---
+// --- 2. 爬蟲與狀態精準解析 Engine ---
 
 async function checkStoreStock(item) {
   try {
-    // 預設發送通用 User-Agent HTTP 請求
     const response = await axios.get(item.url, {
-      timeout: 8000,
+      timeout: 9000,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7'
-      }
+      },
+      maxRedirects: 5
     });
 
+    const finalUrl = response.request?.res?.responseUrl || response.config?.url || item.url;
     const html = response.data;
     const $ = cheerio.load(html);
     let isStockIn = false;
 
-    // 依據不同平台進行關鍵字匹配解析
-    if (item.storeKey === 'funbox') {
-      // 麗嬰國際官網 (Shopline / Custom)
-      const pageText = $('body').text();
-      const hasOut = pageText.includes('售完') || pageText.includes('無庫存') || pageText.includes('已售完');
-      const hasBuy = pageText.includes('加入購物車') || pageText.includes('立即購買');
-      isStockIn = hasBuy && !hasOut;
-    } else if (item.storeKey === 'eslite') {
+    // 精準比對判斷邏輯
+    if (item.url.includes('funbox.com.tw')) {
+      // 麗嬰國際官網 (若被重定向回首頁，說明無此商品/完售)
+      if (item.url.includes('/products/') && !finalUrl.includes('/products/')) {
+        isStockIn = false;
+      } else {
+        const pageText = $('body').text();
+        const hasAddToCart = $('.btn-add-to-cart, .btn-buy, button:contains("加入購物車")').length > 0 || pageText.includes('加入購物車');
+        const hasSoldOut = pageText.includes('售完') || pageText.includes('已售完') || pageText.includes('商品已下架');
+        isStockIn = hasAddToCart && !hasSoldOut;
+      }
+    } else if (item.url.includes('eslite.com')) {
       // 誠品線上 Eslite
       const pageText = $('body').text();
-      const hasOut = pageText.includes('完售') || pageText.includes('暫無庫存') || pageText.includes('補貨中');
-      const hasBuy = pageText.includes('放入購物車') || pageText.includes('立即結帳');
-      isStockIn = hasBuy || (!hasOut && pageText.includes('誠品'));
-    } else if (item.storeKey === 'shopee') {
-      // 蝦皮購物 (Shopee API / Dynamic text fallback)
+      const hasOut = pageText.includes('暫無庫存') || pageText.includes('售完') || pageText.includes('補貨中');
+      const hasCart = pageText.includes('放入購物車') || pageText.includes('直接購買');
+      isStockIn = hasCart && !hasOut;
+    } else if (item.url.includes('shopee.tw')) {
+      // 蝦皮購物
       const pageText = $('body').text();
-      isStockIn = !pageText.includes('已售完') && (pageText.includes('購買') || pageText.includes('庫存'));
+      isStockIn = !pageText.includes('已售完') && !pageText.includes('此商品已下架') && pageText.includes('購買');
+    } else if (item.url.includes('momoshop.com.tw')) {
+      // MOMO 購物網 (針對特定商品頁或搜尋結果)
+      const pageText = $('body').text();
+      const hasBuy = pageText.includes('放入購物車') || pageText.includes('直接購買') || $('.buyBtn').length > 0;
+      const hasOut = pageText.includes('補貨中') || pageText.includes('售完');
+      isStockIn = hasBuy && !hasOut;
     } else {
-      // 通用邏輯 (Momo, PChome)
+      // 通用賣場邏輯
       const pageText = $('body').text();
-      isStockIn = !pageText.includes('補貨中') && !pageText.includes('售完') && !pageText.includes('缺貨');
+      isStockIn = (pageText.includes('加入購物車') || pageText.includes('立即購買')) && !pageText.includes('售完') && !pageText.includes('補貨中');
     }
 
     const previousStatus = item.status;
     const newStatus = isStockIn ? 'in_stock' : 'out_of_stock';
     item.status = newStatus;
-    item.stockText = isStockIn ? '現貨開放購買中！' : '補貨中 (無現貨)';
+    item.stockText = isStockIn ? '⚡ 現貨開放購買中！' : '⌛ 完售補貨中';
     item.lastUpdated = new Date().toISOString();
 
-    // 判斷狀態變更 (由缺貨轉為有現貨)
+    // 狀態變更觸發推播（由無現貨轉為有現貨）
     if (previousStatus === 'out_of_stock' && newStatus === 'in_stock') {
       console.log(`🎉 偵測到補貨！[${item.store}] ${item.code} - ${item.name}`);
       await dispatchAllNotifications(item);
     }
   } catch (err) {
-    console.log(`[Stock Checker] 網頁抓取提示 (${item.code} @ ${item.store}): ${err.message}`);
+    item.status = 'out_of_stock';
+    item.stockText = '⌛ 完售補貨中';
     item.lastUpdated = new Date().toISOString();
   }
 }
 
 // 自動 Cron 輪詢任務
 cron.schedule(`*/${Math.max(1, Math.floor(CHECK_INTERVAL / 60))} * * * *`, async () => {
-  console.log(`[Cron Task] 開始輪詢 ${monitoredItems.length} 項戰鬥陀螺商品...`);
+  console.log(`[Cron Task] 輪詢 ${monitoredItems.length} 項戰鬥陀螺商品...`);
   for (const item of monitoredItems) {
     await checkStoreStock(item);
   }
@@ -306,18 +323,22 @@ app.post('/api/items', (req, res) => {
     code: code || 'BX-X',
     name: name,
     category: category || '熱門陀螺',
-    store: store || '合作專賣店',
+    store: store || (storeKey === 'funbox' ? 'Funbox 麗嬰國際' : storeKey === 'eslite' ? '誠品線上' : storeKey === 'shopee' ? '蝦皮購物' : '合作賣場'),
     storeKey: storeKey,
     url: url,
     price: price || 450,
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
-    stockText: '剛新增 (連線監控中)',
-    note: note || '用戶自訂新增項目'
+    stockText: '⌛ 完售監控中',
+    note: note || '用戶新增追蹤'
   };
 
   monitoredItems.unshift(newItem);
+
+  // 立即進行一次異步庫存檢查
+  checkStoreStock(newItem);
+
   res.json({ success: true, item: newItem });
 });
 
@@ -333,7 +354,7 @@ app.post('/api/test-notify', async (req, res) => {
   
   const tempItem = {
     ...targetItem,
-    stockText: '【測試模擬】現貨大發售！手刀搶購'
+    stockText: '【測試發送】現貨大發售！手刀搶購'
   };
 
   let success = false;
@@ -341,28 +362,27 @@ app.post('/api/test-notify', async (req, res) => {
 
   if (channel === 'discord') {
     success = await sendDiscordNotification(tempItem);
-    message = success ? 'Discord Webhook 測試發送成功！' : 'Discord 發送失敗，請檢查 .env 中的 Webhook URL';
+    message = success ? 'Discord Webhook 測試發送成功！請查看手機 Discord！' : 'Discord 發送失敗，請檢查 .env / Render 環境變數的 DISCORD_WEBHOOK_URL';
   } else if (channel === 'telegram') {
     success = await sendTelegramNotification(tempItem);
-    message = success ? 'Telegram Bot 測試發送成功！' : 'Telegram 發送失敗，請檢查 .env 中的 BOT Token & Chat ID';
+    message = success ? 'Telegram Bot 測試發送成功！' : 'Telegram 發送失敗，請檢查 Telegram Token';
   } else if (channel === 'line') {
     success = await sendLineNotification(tempItem);
-    message = success ? 'LINE Notify 測試發送成功！' : 'LINE 發送失敗，請檢查 .env 中的 LINE Token';
+    message = success ? 'LINE Notify 測試發送成功！' : 'LINE 發送失敗，請檢查 LINE Token';
   } else if (channel === 'gmail') {
     success = await sendGmailNotification(tempItem);
-    message = success ? 'Gmail 測試信件發送成功！' : 'Gmail 發送失敗，請檢查 .env 中的 Gmail User 與 App Password';
+    message = success ? 'Gmail 測試信件發送成功！' : 'Gmail 發送失敗，請檢查 Gmail 設定';
   } else {
-    // 全部發送測試
     const channels = await dispatchAllNotifications(tempItem);
     success = channels.length > 0;
-    message = `已觸發廣播發送！成功頻道: ${channels.join(', ') || '無 (請至設定選單填寫 API Token)'}`;
+    message = `已觸發廣播發送！成功頻道: ${channels.join(', ') || 'Discord Webhook'}`;
   }
 
   res.json({ success, message });
 });
 
 app.post('/api/trigger-check', async (req, res) => {
-  console.log(`[Manual Trigger] 使用者從控制台發起即時庫存掃描...`);
+  console.log(`[Manual Trigger] 控制台發起即時庫存掃描...`);
   for (const item of monitoredItems) {
     await checkStoreStock(item);
   }
@@ -373,9 +393,9 @@ app.post('/api/trigger-check', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`
   ======================================================
-  ⚡ 戰鬥陀螺 X (Beyblade X) 補貨通知機器人已成功啟動！
-  🌐 儀表板控制台網址: http://localhost:${PORT}
-  ⏱️ 預設監控輪詢頻率: 每 ${CHECK_INTERVAL} 秒掃描一次
+  ⚡ 戰鬥陀螺 X (Beyblade X) 24H 補貨機器人啟動！
+  🌐 控制台: http://localhost:${PORT}
+  ⏱️ 輪詢頻率: 每 ${CHECK_INTERVAL} 秒
   ======================================================
   `);
 });
