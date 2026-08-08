@@ -1,106 +1,125 @@
 /**
- * 戰鬥陀螺 X (Beyblade X) 補貨通知系統 - 預設商品與通路資料
+ * 戰鬥陀螺 X (Beyblade X) 補貨通知系統 - 預設商品與多功能通知資料
  */
 
 const PRESET_BEYBLADES = [
   {
     id: 'bx-35',
     code: 'BX-35',
-    name: '戰鬥陀螺 X BX-35 黑色烈燄衝擊發射組 / 隨機強化包 Vol.4',
+    type: 'restock', // restock (現貨) | lottery (抽選) | preorder (預購) | event (抽獎活動)
+    typeText: '⚡ 現貨補貨',
+    name: '戰鬥陀螺 X BX-35 黑色烈燄衝擊發射組 / 隨機包 Vol.4',
     category: '特別限定組',
     store: 'Funbox 麗嬰國際',
     storeKey: 'funbox',
     url: 'https://shop.funbox.com.tw/products/beyblade-x-bx-35',
     price: 699,
+    msrp: 699,
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
     stockText: '⌛ 完售監控中',
-    note: 'Funbox 官網正版公司貨'
+    note: '麗嬰國際官方原價公司貨 (防黃牛規避)'
+  },
+  {
+    id: 'lottery-funbox-01',
+    code: 'UX-02-LOT',
+    type: 'lottery',
+    typeText: '📝 實名制抽選',
+    name: '【 Funbox 門市】戰鬥陀螺 X UX-02 赫爾斯魔槌 線上實名制抽籤登記',
+    category: '官方限定抽選',
+    store: 'Funbox 門市抽選頁',
+    storeKey: 'funbox',
+    url: 'https://shop.funbox.com.tw/',
+    price: 550,
+    msrp: 550,
+    status: 'out_of_stock',
+    lastUpdated: new Date().toISOString(),
+    image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=400&q=80',
+    stockText: '📝 抽籤登記中 (中籤憑身分證領取)',
+    note: '杜絕黃牛！Funbox 官方實名制抽籤購買'
+  },
+  {
+    id: 'preorder-eslite-01',
+    code: 'CX-02-PRE',
+    type: 'preorder',
+    typeText: '📅 新品預購',
+    name: '戰鬥陀螺 X CX-02 世代爆裂對戰發射組 (首批限量預購)',
+    category: '新品首發預購',
+    store: '誠品線上 Eslite',
+    storeKey: 'eslite',
+    url: 'https://www.eslite.com/search?q=%E6%88%B0%E9%AC%B5%E9%99%80%E8%9E%BA',
+    price: 1280,
+    msrp: 1280,
+    status: 'out_of_stock',
+    lastUpdated: new Date().toISOString(),
+    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80',
+    stockText: '📅 首批開放預購',
+    note: '誠品文具館正版代理，預計 9 月發貨'
+  },
+  {
+    id: 'event-fbtw-01',
+    code: 'FB-EVENT',
+    type: 'event',
+    typeText: '🎁 官方抽獎/大會',
+    name: '【戰鬥陀螺 TW 官方活動】G1 大會參賽資格與免費陀螺抽獎活動',
+    category: '官方活動獎勵',
+    store: '戰鬥陀螺 TW 官方 FB',
+    storeKey: 'official',
+    url: 'https://www.facebook.com/BeybladeTW',
+    price: 0,
+    msrp: 0,
+    status: 'in_stock',
+    lastUpdated: new Date().toISOString(),
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80',
+    stockText: '🎁 官方活動進行中',
+    note: '戰鬥陀螺台灣代理商 Takara Tomy 公開活動'
   },
   {
     id: 'ux-01',
     code: 'UX-01',
+    type: 'restock',
+    typeText: '⚡ 現貨補貨',
     name: '戰鬥陀螺 X UX-01 德拉克特攻 / 噬魔霸龍 (Dran Dagger)',
     category: 'UX 獨特系列',
-    store: '誠品線上 Eslite',
-    storeKey: 'eslite',
-    url: 'https://www.eslite.com/product/1005201242682',
+    store: '鼎美 Toy World',
+    storeKey: 'toyworld',
+    url: 'https://www.toyworld.com.tw/',
     price: 495,
+    msrp: 495,
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80',
     stockText: '⌛ 完售監控中',
-    note: '誠品線上文具館代理版'
+    note: '鼎美專櫃正版公司貨'
   },
   {
-    id: 'bx-36',
+    id: 'books-01',
     code: 'BX-36',
-    name: '戰鬥陀螺 X BX-36 鯨魚水浪 5-80E / Whale Wave 戰鬥陀螺',
+    type: 'restock',
+    typeText: '⚡ 現貨補貨',
+    name: '戰鬥陀螺 X BX-36 鯨魚水浪 5-80E 戰鬥陀螺',
     category: 'BX 基礎系列',
-    store: '蝦皮購物 麗嬰旗艦店',
-    storeKey: 'shopee',
-    url: 'https://shopee.tw/search?keyword=BX-36%20%E6%84%9B%EAC%E5%A9%A6%E6%8E%A7',
+    store: '博客來 Books.com',
+    storeKey: 'books',
+    url: 'https://www.books.com.tw/',
     price: 395,
+    msrp: 395,
     status: 'out_of_stock',
     lastUpdated: new Date().toISOString(),
     image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80',
     stockText: '⌛ 完售監控中',
-    note: '蝦皮商城 24H 快速出貨'
-  },
-  {
-    id: 'ux-02',
-    code: 'UX-02',
-    name: '戰鬥陀螺 X UX-02 赫爾斯魔槌 / 烈焰巨神特別版',
-    category: 'UX 獨特系列',
-    store: 'Funbox 麗嬰國際',
-    storeKey: 'funbox',
-    url: 'https://shop.funbox.com.tw/products/ux-02-hells-hammer',
-    price: 550,
-    status: 'out_of_stock',
-    lastUpdated: new Date().toISOString(),
-    image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=400&q=80',
-    stockText: '⌛ 完售監控中',
-    note: '需實名制登記抽籤購買'
-  },
-  {
-    id: 'cx-01',
-    code: 'CX-01',
-    name: '戰鬥陀螺 X CX-01 極限爆裂終極對戰組 (含雙發射器+X拉軌賽道)',
-    category: '對戰組合套裝',
-    store: 'MOMO 購物網',
-    storeKey: 'momo',
-    url: 'https://www.momoshop.com.tw/search/searchShop.jsp?keyword=Beyblade%20CX-01',
-    price: 1999,
-    status: 'out_of_stock',
-    lastUpdated: new Date().toISOString(),
-    image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80',
-    stockText: '⌛ 完售監控中',
-    note: 'MOMO 滿額折抵優惠中'
-  },
-  {
-    id: 'bxg-01',
-    code: 'BXG-01',
-    name: '戰鬥陀螺 X BXG-01 鳳凰飛翼 9-60GF 金屬重攻特別版 (G1 大會限定)',
-    category: '會場/限定版',
-    store: 'PChome 24h 購物',
-    storeKey: 'pchome',
-    url: 'https://24h.pchome.com.tw/store/DEAS01',
-    price: 850,
-    status: 'out_of_stock',
-    lastUpdated: new Date().toISOString(),
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80',
-    stockText: '⌛ 完售監控中',
-    note: '搶手極品限定款式'
+    note: '博客來網路書店正版婦幼館'
   }
 ];
 
 const STORE_CHANNELS = [
-  { key: 'funbox', name: 'Funbox 麗嬰國際', color: '#ff4757', icon: '🛍️', domain: 'shop.funbox.com.tw' },
-  { key: 'eslite', name: '誠品線上 Eslite', color: '#2ed573', icon: '📚', domain: 'eslite.com' },
-  { key: 'shopee', name: '蝦皮購物 Shopee', color: '#ff7f50', icon: '🧡', domain: 'shopee.tw' },
-  { key: 'momo', name: 'MOMO 購物網', color: '#e84393', icon: '💖', domain: 'momoshop.com.tw' },
-  { key: 'pchome', name: 'PChome 24h', color: '#1e90ff', icon: '🛒', domain: 'pchome.com.tw' }
+  { key: 'funbox', name: 'Funbox 麗嬰國際', color: '#ff4757', icon: '🛍️' },
+  { key: 'eslite', name: '誠品線上 Eslite', color: '#2ed573', icon: '📚' },
+  { key: 'toyworld', name: '鼎美 Toy World', color: '#ffbe76', icon: '🧸' },
+  { key: 'books', name: '博客來 Books', color: '#70a1ff', icon: '📖' },
+  { key: 'shopee', name: '蝦皮官方旗艦', color: '#ff7f50', icon: '🧡' },
+  { key: 'official', name: '戰鬥陀螺 TW 官方', color: '#a29bfe', icon: '📢' }
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
